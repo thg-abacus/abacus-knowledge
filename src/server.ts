@@ -6,7 +6,7 @@
  *   REST HTTP           → for humans to upload and search via browser
  */
 import http from "http";
-import { readFileSync, createReadStream, existsSync, mkdirSync, writeFileSync, statSync } from "fs";
+import { readFileSync, createReadStream, existsSync, mkdirSync, writeFileSync, statSync, readdirSync } from "fs";
 import { basename, extname, join, resolve } from "path";
 import { randomUUID } from "crypto";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
@@ -15,6 +15,7 @@ import { KnowledgeIndex } from "./indexer";
 import { searchKnowledge } from "./tools/search";
 import { listKnowledgeDocs } from "./tools/list-docs";
 import { readKnowledgeDoc } from "./tools/read-doc";
+import { navigateTree } from "./tools/navigate-tree";
 import { logger } from "./utils/logger";
 
 const MAX_UPLOAD_MB = 50;
@@ -97,6 +98,7 @@ export async function startServer(index: KnowledgeIndex, port: number): Promise<
     searchKnowledge(index),
     listKnowledgeDocs(index),
     readKnowledgeDoc(index),
+    navigateTree(index),
   ];
 
   for (const t of tools) {
@@ -211,6 +213,46 @@ export async function startServer(index: KnowledgeIndex, port: number): Promise<
         res.writeHead(400);
         res.end(JSON.stringify({ error: "No valid files found in upload" }));
       }
+      return;
+    }
+
+    // ── Tree navigator (structured docs) ──
+    if (method === "GET" && pathname === "/tree/manifest") {
+      const manifestPath = join(process.cwd(), "tree", "manifest.yaml");
+      if (existsSync(manifestPath)) {
+        res.writeHead(200, { "Content-Type": "text/yaml; charset=utf-8" });
+        createReadStream(manifestPath).pipe(res);
+      } else {
+        res.writeHead(404);
+        res.end("Manifest not configured yet. Create tree/manifest.yaml");
+      }
+      return;
+    }
+
+    if (method === "GET" && pathname.startsWith("/tree/")) {
+      const treePath = pathname.replace("/tree/", "").replace(/\.\./g, "").replace(/\\/g, "/");
+      const fullPath = join(process.cwd(), "tree", treePath + ".md");
+      if (existsSync(fullPath)) {
+        res.writeHead(200, { "Content-Type": "text/markdown; charset=utf-8" });
+        createReadStream(fullPath).pipe(res);
+        return;
+      }
+      // Try without .md extension (directory listing)
+      const dirPath = join(process.cwd(), "tree", treePath);
+      if (existsSync(dirPath)) {
+        try {
+          const entries = readdirSync(dirPath, { withFileTypes: true });
+          const listing = entries
+            .filter(e => !e.name.startsWith("."))
+            .map(e => `${e.isDirectory() ? "📂" : "📄"} /tree/${treePath}/${e.name}${e.isDirectory() ? "/" : ""}`)
+            .join("\n");
+          res.writeHead(200, { "Content-Type": "text/plain; charset=utf-8" });
+          res.end(listing || "(empty directory)");
+          return;
+        } catch {}
+      }
+      res.writeHead(404);
+      res.end(`Not found: ${treePath}.md\nUse /tree/manifest to explore.`);
       return;
     }
 

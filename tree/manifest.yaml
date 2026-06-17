@@ -1,0 +1,72 @@
+# Knowledge Tree Manifest — ABACUS Ecosystem
+# This is the ROOT map. The AI reads this first (~1.5 KB) and decides
+# which branches to follow based on the user's question.
+
+tree:
+  integrations:
+    title: "EPM Integrations — VCV, PO, TRN"
+    description: "How Oracle EPM data integrations work: setup, troubleshooting, process control forms"
+    index: tree/integrations/index.md
+    children:
+      vcv:
+        title: "VCV — Vendor Cost Validation"
+        description: "Vendor cost validation integration: setup, process control, troubleshooting"
+        intent: [vcv, vendor cost, validación, cost validation]
+        index: tree/integrations/vcv/index.md
+        docs:
+          - path: tree/integrations/vcv/setup.md
+            title: "VCV Setup"
+            intent: [setup, configurar, configure, install]
+          - path: tree/integrations/vcv/process-control.md
+            title: "VCV Process Control"
+            intent: [process control, POV, calculation, load_timestamp]
+          - path: tree/integrations/vcv/troubleshooting.md
+            title: "VCV Troubleshooting"
+            intent: [error, falló, troubleshooting, debug, failed]
+      po:
+        title: "PO — Purchase Order"
+        description: "Purchase order integration: mapping, reconciliation"
+        intent: [po, purchase order, orden de compra]
+        index: tree/integrations/po/index.md
+        docs:
+          - path: tree/integrations/po/setup.md
+            title: "PO Setup"
+            intent: [setup, configurar]
+          - path: tree/integrations/po/mapping.md
+            title: "PO Field Mapping"
+            intent: [mapping, field, campo]
+      trn:
+        title: "TRN — Transaction"
+        description: "Transaction integration"
+        intent: [trn, transaction, transacción]
+        index: tree/integrations/trn/index.md
+        docs:
+          - path: tree/integrations/trn/setup.md
+            title: "TRN Setup"
+            intent: [setup, configurar]
+
+  architecture:
+    title: "System Architecture"
+    description: "High-level system design, data flow, component interactions"
+    intent: [arquitectura, architecture, diseño, design, system, estructura, data flow]
+    index: tree/architecture/index.md
+    docs:
+      - path: tree/architecture/data-flow.md
+        title: "Data Flow"
+        intent: [data flow, how data travels, viajan los datos]
+      - path: tree/architecture/components.md
+        title: "Component Overview"
+        intent: [component, microservice, servicio]
+
+  runbooks:
+    title: "Operational Runbooks"
+    description: "Deployment, restart, emergency procedures"
+    intent: [runbook, deploy, restart, reiniciar, emergency, error, production]
+    index: tree/runbooks/index.md
+    docs:
+      - path: tree/runbooks/deploy.md
+        title: "Deployment Guide"
+        intent: [deploy, despliegue, release]
+      - path: tree/runbooks/emergency.md
+        title: "Emergency Procedures"
+        intent: [emergency, urgent, caída, outage]
