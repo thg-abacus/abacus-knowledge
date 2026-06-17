@@ -34,10 +34,12 @@ export function navigateTree(index?: KnowledgeIndex) {
   return {
     name: "navigate_knowledge_tree",
     description:
-      "Navigate the ABACUS structured documentation tree. " +
-      "Call with path='manifest' to see the root map. Then follow branches by passing their paths. " +
-      "Use this for domain-specific docs (integrations, architecture, runbooks). " +
-      "Use search_knowledge for full-text search across large PDFs/Word docs.",
+      "PRIMARY knowledge source for ABACUS ecosystem docs. " +
+      "Use this FIRST for any domain-specific question: integrations (VCV/PO/TRN), " +
+      "architecture, troubleshooting, runbooks, deployment. " +
+      "Call with path='manifest' to see the root map, then follow branches. " +
+      "DO NOT use search_knowledge for questions answerable by the tree — the tree " +
+      "returns complete, structured docs with zero inference needed.",
     schema: {
       path: z.string().default("manifest").describe(
         "Path to navigate: 'manifest' for the root map, or a branch path like 'integrations/vcv/index'"

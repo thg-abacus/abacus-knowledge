@@ -7,7 +7,10 @@ import type { KnowledgeIndex } from "../indexer";
 export function searchKnowledge(index: KnowledgeIndex) {
   return {
     name: "search_knowledge",
-    description: "Full-text search across indexed ABACUS documentation (PDF, Word, Excel, Markdown, TXT). Returns snippets, document paths, and relevance scores.",
+    description:       "LAST-RESORT full-text search across large indexed documents (PDF, Word, Excel). " +
+      "ONLY use this when navigate_knowledge_tree cannot answer the question. " +
+      "The tree is the PRIMARY source for structured docs — use it first. " +
+      "This tool searches raw document text and returns snippets, not structured answers.",
     schema: {
       query: z.string().describe("Search query — natural language or keywords"),
       limit: z.number().optional().default(10).describe("Max results (default: 10)"),
